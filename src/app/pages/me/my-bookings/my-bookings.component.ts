@@ -40,7 +40,7 @@ export class MyBookingsComponent {
       confirmButtonText: "Sí, eliminar"
     }).then((result) => {
       if (result.isConfirmed) {
-        this.bookingService.deleteBoooking(bookingId).subscribe({
+        this.bookingService.deleteBooking(bookingId).subscribe({
           next: ()=>{
             Swal.fire({
               title: "¡Reserva eliminada!",

@@ -1,29 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/users'; 
+  private url = 'http://localhost:3000/api/users';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
-  getAll(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}`);
+  getAllUsers(): Observable<User[]> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.user?.token}`,
+    });
+    return this.http.get<User[]>(`${this.url}/all`, { headers });
   }
 
-  getById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`);
+  updateUser(userId: string, userData: any): Observable<User> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${this.authService.user?.token}`,
+    });
+    return this.http.patch<User>(`${this.url}/update/${userId}`, userData, { headers });
   }
 
-  updateUser(id: string, user: User): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/${id}`, user);
-  }
-
-  deleteUser(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`);
-  }
 }

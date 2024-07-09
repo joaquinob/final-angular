@@ -46,5 +46,17 @@ export class AuthService {
   deleteUser(){
     this.user = null
     this.cookieService.delete("user")
+    window.location.reload(); // Recargar la página
+  }
+
+  isUserAdmin(): boolean {
+    return this.user?.role === 'admin';
+  }
+
+  getUser(): User | null {
+    if (this.user === null && this.cookieService.check('user')) {
+      this.user = JSON.parse(this.cookieService.get('user'));
+    }
+    return this.user;
   }
 }
