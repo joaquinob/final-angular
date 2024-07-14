@@ -26,4 +26,8 @@ export class UserService {
     return this.http.patch<User>(`${this.url}/update/${userId}`, userData, { headers });
   }
 
+  getUser(userId: string): Observable<User> {
+    return this.http.get<User>(`${this.url}/${userId}`);
+  }
+
 }

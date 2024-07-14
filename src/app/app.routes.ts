@@ -8,6 +8,7 @@ import { MeComponent } from './pages/me/me.component';
 import { isLoggedInGuard } from './guards/is-logged-in.guard';
 import { MyBookingsComponent } from './pages/me/my-bookings/my-bookings.component';
 import { MyInfoComponent } from './pages/me/my-info/my-info.component';
+import { EditComponent } from './pages/edit/edit.component';
 
 export const routes: Routes = [
     {
@@ -42,5 +43,10 @@ export const routes: Routes = [
                 component: MyInfoComponent
             }
         ]
+    },
+    {
+        path: "edit/:id",
+        component: EditComponent,
+        canActivate: [isLoggedInGuard]
     }
 ];
