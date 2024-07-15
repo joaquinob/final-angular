@@ -2,6 +2,6 @@ export interface User {
     name?: string
     email?: string
     token: string
-    id: string
-    role: string
+    _id: string
+    role: 'user' | 'admin'
 }

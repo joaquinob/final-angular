@@ -21,6 +21,7 @@ export class BookingsComponent {
   constructor(private bookingService: BookingService, private authService: AuthService){
     this.bookingService.getAllBookings().subscribe({
       next: (response)=>{
+        console.log('Bookings:', response);
         this.bookings = response as Booking[]
       },
       error: ()=>{
@@ -68,9 +69,10 @@ export class BookingsComponent {
 
   editar(bookingId: string) {
     console.log('Editar reserva:', bookingId)
-    const reservaEditar: Booking | undefined = this.bookings.find(x => x._id === bookingId);
+    const reservaEditar: Booking | undefined | null = this.bookings.find(x => x._id === bookingId);
     if (reservaEditar) {
       console.log('Editar reserva:', reservaEditar)
+
       Swal.fire({
         title: `Editar reserva del ${reservaEditar.vehicle.brand} ${reservaEditar.vehicle.model}`,
         html: `<div>
@@ -82,6 +84,10 @@ export class BookingsComponent {
             <label class="form-label">Fecha fin</label>
             <input id="endDate" type="date" class="form-control" value="${reservaEditar.endDate}">
           </div>
+          <div>
+            <label class="form-label">Nuevo precio</label>
+            <p id="newPrice"></p>
+          </div>
         </div>`,
         showCancelButton: true,
         confirmButtonText: 'Guardar cambios',
@@ -89,22 +95,30 @@ export class BookingsComponent {
         preConfirm: () => {
           const startDate = (document.getElementById('startDate') as HTMLInputElement).value;
           const endDate = (document.getElementById('endDate') as HTMLInputElement).value;
-          return { startDate, endDate };
+
+          const days = (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24);
+          const newPrice = days * reservaEditar.vehicle.pricePerDay;
+
+          (document.getElementById('newPrice') as HTMLElement).innerText = `Nuevo precio: ${newPrice}`;
+
+          return { startDate, endDate, newPrice };
         }
       }).then((result) => {
         if (result.isConfirmed) {
-          const { startDate, endDate } = result.value;
-          this.bookingService.editar(bookingId, startDate, endDate).subscribe({
+          const { startDate, endDate, newPrice } = result.value;
+          this.bookingService.updateBookingDates(bookingId, startDate, endDate).subscribe({
             next: () => {
+              reservaEditar.startDate = startDate;
+              reservaEditar.endDate = endDate;
+              reservaEditar.price = newPrice; 
+
               Swal.fire({
                 title: '¡Reserva actualizada!',
-                text: 'La reserva ha sido actualizada correctamente',
+                text: `La reserva ha sido actualizada correctamente. Nuevo precio: ${newPrice}`,
                 icon: 'success',
                 showConfirmButton: false,
                 timer: 2000
               });
-              reservaEditar.startDate = startDate;
-              reservaEditar.endDate = endDate;
             },
             error: () => {
               Swal.fire({
@@ -118,8 +132,25 @@ export class BookingsComponent {
           });
         }
       });
+
+      //Para recalcular el precio cuando se modificn las fechas
+      const startDateInput = document.getElementById('startDate') as HTMLInputElement;
+      const endDateInput = document.getElementById('endDate') as HTMLInputElement;
+
+      startDateInput.addEventListener('change', () => this.updatePrice(reservaEditar, startDateInput, endDateInput));
+      endDateInput.addEventListener('change', () => this.updatePrice(reservaEditar, startDateInput, endDateInput));
     } else {
       console.error('No se encontró la reserva a editar')
+    }
+  }
+  updatePrice(reservaEditar: Booking, startDateInput: HTMLInputElement, endDateInput: HTMLInputElement) {
+    const startDate = startDateInput.value;
+    const endDate = endDateInput.value;
+
+    if (startDate && endDate) {
+      const days = (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24);
+      const newPrice = days * reservaEditar.vehicle.pricePerDay;
+      (document.getElementById('newPrice') as HTMLElement).innerText = `Nuevo precio: ${newPrice}`;
     }
   }
 }

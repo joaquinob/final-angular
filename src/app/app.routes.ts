@@ -7,8 +7,13 @@ import { isNotLoggedInGuard } from './guards/is-not-logged-in.guard';
 import { MeComponent } from './pages/me/me.component';
 import { isLoggedInGuard } from './guards/is-logged-in.guard';
 import { MyBookingsComponent } from './pages/me/my-bookings/my-bookings.component';
+
+import { AdminComponent } from './pages/admin/admin.component';
+import { BookingsComponent } from './pages/admin/bookings/bookings.component';
+
+import { UsersComponent } from './pages/admin/users/users.component';
+import { VehiclesComponent } from './pages/admin/vehicles/vehicles.component';
 import { MyInfoComponent } from './pages/me/my-info/my-info.component';
-import { EditComponent } from './pages/edit/edit.component';
 
 export const routes: Routes = [
     {
@@ -45,8 +50,22 @@ export const routes: Routes = [
         ]
     },
     {
-        path: "edit/:id",
-        component: EditComponent,
-        canActivate: [isLoggedInGuard]
+        path: "admin",
+        component: AdminComponent,
+        canActivate: [isLoggedInGuard],
+        children:[
+            {
+                path: "bookings",
+                component: BookingsComponent
+            },
+            {
+                path: "vehicles",
+                component: VehiclesComponent
+            },
+            {
+                path: "users",
+                component: UsersComponent
+            },
+        ]
     }
 ];

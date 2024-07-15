@@ -1,6 +1,8 @@
 export interface LoginResponse {
     message: string
     token: string
+    email: string
+    name: string
     id: string
-    role: string
+    role: 'user' | 'admin'
 }

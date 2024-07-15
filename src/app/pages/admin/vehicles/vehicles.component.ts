@@ -89,11 +89,9 @@ export class VehiclesComponent {
                             showConfirmButton: false,
                             timer: 2000
                         });
-                        window.location.reload(); // Recargar la página
                         Object.assign(vehicle, updatedVehicle);
                         console.log('Vehículo después de la actualización:', vehicle);
                     },
-                    
                     error: (error) => {
                         console.error('Error al actualizar:', error);
                         Swal.fire({
@@ -205,8 +203,6 @@ export class VehiclesComponent {
             });
             this.vehicles.push(response.vehicle as Vehicle);
             console.log(this.vehicles)
-            window.location.reload(); // Recargar la página
-
           },
           error: (error) => {
             console.error('Error al agregar vehículo:', error);
@@ -222,6 +218,4 @@ export class VehiclesComponent {
       }
     });
   }
-  
-
 }

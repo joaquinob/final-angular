@@ -22,11 +22,6 @@
                   @else {
                     <span class="sin-stock">Sin stock</span>
                   }
-
-                  @if(user.role === 'admin'){
-                    <a [routerLink]="'/edit/'+vehicle._id" class="btn btn-outline-primary">Editar</a>
-                  }
-
                 </div>
                 <div class="card-footer">
                     <small class="text-muted">Modelo del año {{vehicle.year}}</small>
@@ -34,5 +29,4 @@
               </div>
         </li>
     }
-  
 </ul>
